@@ -28,7 +28,10 @@ const CategoryFilter = () => {
   };
 
   const handlePriceChange = (value: number[]) => {
-    dispatch(setPriceRange(value));
+    // Ensure we have exactly 2 elements for the tuple type
+    if (value.length === 2) {
+      dispatch(setPriceRange([value[0], value[1]] as [number, number]));
+    }
   };
 
   return (
