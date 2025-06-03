@@ -4,11 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Book, Monitor, Utensils, Armchair, Shirt, Dumbbell, Grid3X3 } from 'lucide-react';
-
-interface CategoryFilterProps {
-  selectedCategory: string;
-  onCategoryChange: (category: string) => void;
-}
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { setCategory, setPriceRange } from '@/store/slices/productsSlice';
 
 const categories = [
   { name: "All", icon: Grid3X3, count: 150 },
@@ -22,7 +19,18 @@ const categories = [
 
 const conditions = ["Excellent", "Good", "Fair", "Poor"];
 
-const CategoryFilter = ({ selectedCategory, onCategoryChange }: CategoryFilterProps) => {
+const CategoryFilter = () => {
+  const dispatch = useAppDispatch();
+  const { filters } = useAppSelector(state => state.products);
+
+  const handleCategoryChange = (category: string) => {
+    dispatch(setCategory(category));
+  };
+
+  const handlePriceChange = (value: number[]) => {
+    dispatch(setPriceRange(value));
+  };
+
   return (
     <div className="space-y-6">
       {/* Categories */}
@@ -36,13 +44,13 @@ const CategoryFilter = ({ selectedCategory, onCategoryChange }: CategoryFilterPr
             return (
               <Button
                 key={category.name}
-                variant={selectedCategory === category.name ? "default" : "ghost"}
+                variant={filters.category === category.name ? "default" : "ghost"}
                 className={`w-full justify-start text-left ${
-                  selectedCategory === category.name 
-                    ? "bg-blue-600 text-white" 
-                    : "hover:bg-gray-100"
+                  filters.category === category.name 
+                    ? "bg-emerald-600 text-white hover:bg-emerald-700" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
-                onClick={() => onCategoryChange(category.name)}
+                onClick={() => handleCategoryChange(category.name)}
               >
                 <IconComponent className="w-4 h-4 mr-3" />
                 <span className="flex-1">{category.name}</span>
@@ -63,14 +71,15 @@ const CategoryFilter = ({ selectedCategory, onCategoryChange }: CategoryFilterPr
         <CardContent>
           <div className="space-y-4">
             <Slider
-              defaultValue={[0, 1000]}
+              value={filters.priceRange}
+              onValueChange={handlePriceChange}
               max={1000}
               step={10}
               className="w-full"
             />
-            <div className="flex justify-between text-sm text-gray-600">
-              <span>$0</span>
-              <span>$1000+</span>
+            <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+              <span>${filters.priceRange[0]}</span>
+              <span>${filters.priceRange[1]}+</span>
             </div>
           </div>
         </CardContent>
