@@ -1,7 +1,7 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Plus, ShoppingBag, Sparkles, TrendingUp, Users } from 'lucide-react';
+import { Search, Plus, ShoppingBag, Sparkles, TrendingUp, Users, Heart, MessageCircle, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Navigation from '@/components/Navigation';
@@ -10,6 +10,9 @@ import CategoryFilter from '@/components/CategoryFilter';
 import SearchBar from '@/components/SearchBar';
 import StatsSection from '@/components/sections/StatsSection';
 import FeaturedSection from '@/components/sections/FeaturedSection';
+import PostItemModal from '@/components/marketplace/PostItemModal';
+import ChatModal from '@/components/marketplace/ChatModal';
+import WishlistModal from '@/components/marketplace/WishlistModal';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { fetchProducts } from '@/store/slices/productsSlice';
 import toast, { Toaster } from 'react-hot-toast';
@@ -18,6 +21,10 @@ const Index = () => {
   const dispatch = useAppDispatch();
   const { items: products, loading, searchTerm, filters } = useAppSelector(state => state.products);
   const { isAuthenticated, user } = useAppSelector(state => state.auth);
+  
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
+  const [isWishlistModalOpen, setIsWishlistModalOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchProducts({}));
@@ -48,13 +55,13 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-yellow-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-black">
       <Navigation />
       <Toaster position="top-right" />
       
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-green-600 to-yellow-500" />
         <div className="absolute inset-0 bg-black/20" />
         
         {/* Animated background elements */}
@@ -69,7 +76,7 @@ const Index = () => {
               repeat: Infinity,
               ease: "linear"
             }}
-            className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"
+            className="absolute top-10 left-10 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl"
           />
           <motion.div
             animate={{
@@ -81,7 +88,7 @@ const Index = () => {
               repeat: Infinity,
               ease: "linear"
             }}
-            className="absolute bottom-10 right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"
+            className="absolute bottom-10 right-10 w-32 h-32 bg-green-400/20 rounded-full blur-xl"
           />
         </div>
 
@@ -91,13 +98,13 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <Badge className="mb-4 bg-white/20 text-white border-white/30 hover:bg-white/30">
+            <Badge className="mb-4 bg-yellow-500 text-black border-yellow-400 hover:bg-yellow-600 font-semibold">
               <Sparkles className="w-4 h-4 mr-2" />
-              AI-Powered Marketplace
+              AI-Powered Campus Marketplace
             </Badge>
             
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              <span className="bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-yellow-400 to-green-400 bg-clip-text text-transparent">
                 GreenLoop
               </span>
               <br />
@@ -107,7 +114,7 @@ const Index = () => {
             <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed">
               Revolutionizing university commerce through sustainable exchange. 
               <br className="hidden md:block" />
-              <span className="font-semibold">Reuse. Recycle. Rethink Resources.</span>
+              <span className="font-semibold text-yellow-300">Reuse. Recycle. Rethink Resources.</span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-3xl mx-auto mb-8">
@@ -116,10 +123,38 @@ const Index = () => {
               </div>
               <Button 
                 size="lg" 
-                className="bg-white text-emerald-600 hover:bg-emerald-50 font-semibold px-8 shadow-xl"
+                onClick={() => setIsPostModalOpen(true)}
+                className="bg-yellow-500 text-black hover:bg-yellow-600 font-semibold px-8 shadow-xl"
               >
                 <Plus className="w-5 h-5 mr-2" />
-                List Item
+                Post Item
+              </Button>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex justify-center gap-4 flex-wrap">
+              <Button 
+                variant="outline" 
+                onClick={() => setIsWishlistModalOpen(true)}
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+              >
+                <Heart className="w-4 h-4 mr-2" />
+                Wishlist
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => setIsChatModalOpen(true)}
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Messages
+              </Button>
+              <Button 
+                variant="outline"
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                Alerts
               </Button>
             </div>
 
@@ -128,7 +163,7 @@ const Index = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-emerald-200"
+                className="text-yellow-300 mt-4"
               >
                 Welcome back, {user.name}! 👋
               </motion.div>
@@ -179,11 +214,11 @@ const Index = () => {
               </div>
 
               <div className="flex items-center space-x-2">
-                <Badge variant="outline" className="text-emerald-600 border-emerald-200">
+                <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">
                   <TrendingUp className="w-4 h-4 mr-1" />
                   Trending
                 </Badge>
-                <Badge variant="outline" className="text-blue-600 border-blue-200">
+                <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50">
                   <Users className="w-4 h-4 mr-1" />
                   {products.length}+ Active
                 </Badge>
@@ -229,7 +264,7 @@ const Index = () => {
                 </p>
                 <Button 
                   variant="outline" 
-                  className="border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                  className="border-green-200 text-green-600 hover:bg-green-50"
                 >
                   Clear Filters
                 </Button>
@@ -238,6 +273,21 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Modals */}
+      <PostItemModal isOpen={isPostModalOpen} onClose={() => setIsPostModalOpen(false)} />
+      <ChatModal 
+        isOpen={isChatModalOpen} 
+        onClose={() => setIsChatModalOpen(false)}
+        seller={{
+          name: "Marie Uwimana",
+          avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150",
+          reputation: 4.9,
+          verified: true
+        }}
+        itemTitle="Engineering Mathematics Textbook"
+      />
+      <WishlistModal isOpen={isWishlistModalOpen} onClose={() => setIsWishlistModalOpen(false)} />
     </div>
   );
 };

@@ -174,6 +174,12 @@ const productsSlice = createSlice({
     setSearchTerm: (state, action: PayloadAction<string>) => {
       state.searchTerm = action.payload;
     },
+    setCategory: (state, action: PayloadAction<string>) => {
+      state.filters.category = action.payload;
+    },
+    setPriceRange: (state, action: PayloadAction<[number, number]>) => {
+      state.filters.priceRange = action.payload;
+    },
     setFilters: (state, action: PayloadAction<Partial<ProductsState['filters']>>) => {
       state.filters = { ...state.filters, ...action.payload };
     },
@@ -212,5 +218,5 @@ const productsSlice = createSlice({
   },
 });
 
-export const { setSearchTerm, setFilters, toggleFavorite, clearFilters } = productsSlice.actions;
+export const { setSearchTerm, setCategory, setPriceRange, setFilters, toggleFavorite, clearFilters } = productsSlice.actions;
 export default productsSlice.reducer;
