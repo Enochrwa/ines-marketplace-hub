@@ -23,6 +23,8 @@ export interface Product {
   isActive: boolean;
   views: number;
   likes: number;
+  ownerType?: 'student' | 'university';
+  staffOnly?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -70,7 +72,7 @@ const initialState: ProductsState = {
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
   async (params: { page?: number; search?: string; filters?: any }) => {
-    // Mock API call with realistic data
+    // Mock API call with realistic data including new categories
     await new Promise(resolve => setTimeout(resolve, 800));
     
     const mockProducts: Product[] = [
@@ -99,6 +101,7 @@ export const fetchProducts = createAsyncThunk(
         isActive: true,
         views: 124,
         likes: 15,
+        ownerType: 'student',
         createdAt: '2024-01-15T10:30:00Z',
         updatedAt: '2024-01-15T10:30:00Z',
       },
@@ -108,7 +111,7 @@ export const fetchProducts = createAsyncThunk(
         description: 'Excellent condition MacBook Air with M2 chip, 8GB RAM, 256GB SSD. Used for one semester, includes original charger, box, and protective case.',
         price: 950,
         condition: 'excellent',
-        category: 'Electronics',
+        category: 'Personal Tech',
         subcategory: 'Laptops',
         images: [
           'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400',
@@ -127,6 +130,7 @@ export const fetchProducts = createAsyncThunk(
         isActive: true,
         views: 89,
         likes: 23,
+        ownerType: 'student',
         createdAt: '2024-01-14T14:20:00Z',
         updatedAt: '2024-01-14T14:20:00Z',
       },
@@ -155,9 +159,39 @@ export const fetchProducts = createAsyncThunk(
         isActive: true,
         views: 67,
         likes: 12,
+        ownerType: 'student',
         createdAt: '2024-01-13T09:15:00Z',
         updatedAt: '2024-01-13T09:15:00Z',
       },
+      {
+        id: '4',
+        title: 'Lab Microscope - Department Surplus',
+        description: 'High-quality microscope from Biology Department. Excellent condition, recently calibrated. Perfect for advanced research projects.',
+        price: 450,
+        condition: 'excellent',
+        category: 'Lab Equipment',
+        subcategory: 'Biology',
+        images: [
+          'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400'
+        ],
+        seller: {
+          id: 'dept1',
+          name: 'Biology Department',
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+          reputation: 5.0,
+          verified: true,
+        },
+        location: 'Science Building',
+        tags: ['microscope', 'laboratory', 'biology', 'research'],
+        isFree: false,
+        isActive: true,
+        views: 34,
+        likes: 8,
+        ownerType: 'university',
+        staffOnly: false,
+        createdAt: '2024-01-12T11:00:00Z',
+        updatedAt: '2024-01-12T11:00:00Z',
+      }
     ];
     
     return {
@@ -179,6 +213,9 @@ const productsSlice = createSlice({
     },
     setPriceRange: (state, action: PayloadAction<[number, number]>) => {
       state.filters.priceRange = action.payload;
+    },
+    setCondition: (state, action: PayloadAction<string[]>) => {
+      state.filters.condition = action.payload;
     },
     setFilters: (state, action: PayloadAction<Partial<ProductsState['filters']>>) => {
       state.filters = { ...state.filters, ...action.payload };
@@ -218,5 +255,14 @@ const productsSlice = createSlice({
   },
 });
 
-export const { setSearchTerm, setCategory, setPriceRange, setFilters, toggleFavorite, clearFilters } = productsSlice.actions;
+export const { 
+  setSearchTerm, 
+  setCategory, 
+  setPriceRange, 
+  setCondition,
+  setFilters, 
+  toggleFavorite, 
+  clearFilters 
+} = productsSlice.actions;
+
 export default productsSlice.reducer;

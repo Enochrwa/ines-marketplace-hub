@@ -35,8 +35,9 @@ const Index = () => {
     const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesPrice = product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1];
+    const matchesCondition = filters.condition.length === 0 || filters.condition.includes(product.condition);
     
-    return matchesCategory && matchesSearch && matchesPrice;
+    return matchesCategory && matchesSearch && matchesPrice && matchesCondition;
   });
 
   const containerVariants = {
@@ -108,11 +109,11 @@ const Index = () => {
                 GreenLoop
               </span>
               <br />
-              <span className="text-3xl md:text-4xl font-normal">Campus Exchange</span>
+              <span className="text-3xl md:text-4xl font-normal">INES-Ruhengeri Exchange</span>
             </h1>
             
             <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed">
-              Revolutionizing university commerce through sustainable exchange. 
+              Your comprehensive campus marketplace for buying, selling, and sharing.
               <br className="hidden md:block" />
               <span className="font-semibold text-yellow-300">Reuse. Recycle. Rethink Resources.</span>
             </p>
@@ -210,6 +211,11 @@ const Index = () => {
                       for "<span className="font-semibold">{searchTerm}</span>"
                     </span>
                   )}
+                  {filters.condition.length > 0 && (
+                    <span className="ml-2">
+                      • Condition: {filters.condition.join(', ')}
+                    </span>
+                  )}
                 </p>
               </div>
 
@@ -236,12 +242,26 @@ const Index = () => {
             ) : (
               <motion.div 
                 className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-                variants={containerVariants}
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.1
+                    }
+                  }
+                }}
                 initial="hidden"
                 animate="visible"
               >
                 {filteredProducts.map((product) => (
-                  <motion.div key={product.id} variants={itemVariants}>
+                  <motion.div 
+                    key={product.id} 
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 }
+                    }}
+                  >
                     <ProductCard product={product} />
                   </motion.div>
                 ))}
