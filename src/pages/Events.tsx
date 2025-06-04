@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { fetchEvents, setEventSearchTerm } from '@/store/slices/eventsSlice';
 import EventCard from '@/components/events/EventCard';
+import Navigation from '@/components/Navigation';
 
 const Events = () => {
   const dispatch = useAppDispatch();
@@ -27,6 +28,8 @@ const Events = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <Navigation />
+      
       <div className="container mx-auto px-4 py-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
