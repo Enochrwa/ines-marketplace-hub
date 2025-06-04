@@ -69,13 +69,16 @@ const Navigation = () => {
             <div className="hidden md:flex items-center space-x-6">
               <nav className="flex items-center space-x-4">
                 <Button variant="ghost" className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
-                  Browse
+                  Marketplace
                 </Button>
                 <Button variant="ghost" className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
-                  Categories
+                  Services
                 </Button>
                 <Button variant="ghost" className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
-                  How it Works
+                  Resources
+                </Button>
+                <Button variant="ghost" className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
+                  Events
                 </Button>
               </nav>
               
@@ -222,9 +225,10 @@ const Navigation = () => {
                 className="md:hidden py-4 border-t border-gray-200 dark:border-gray-700"
               >
                 <div className="flex flex-col space-y-3">
-                  <Button variant="ghost" className="justify-start">Browse</Button>
-                  <Button variant="ghost" className="justify-start">Categories</Button>
-                  <Button variant="ghost" className="justify-start">How it Works</Button>
+                  <Button variant="ghost" className="justify-start">Marketplace</Button>
+                  <Button variant="ghost" className="justify-start">Services</Button>
+                  <Button variant="ghost" className="justify-start">Resources</Button>
+                  <Button variant="ghost" className="justify-start">Events</Button>
                   
                   {!isAuthenticated && (
                     <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200 dark:border-gray-700">
