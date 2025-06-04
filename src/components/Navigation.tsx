@@ -20,6 +20,7 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { toggleTheme } from '@/store/slices/uiSlice';
 import { logout } from '@/store/slices/authSlice';
 import AuthModal from './modals/AuthModal';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,10 +29,13 @@ const Navigation = () => {
   const dispatch = useAppDispatch();
   const { isAuthenticated, user } = useAppSelector(state => state.auth);
   const { theme } = useAppSelector(state => state.ui);
+  const location = useLocation();
 
   const handleLogout = () => {
     dispatch(logout());
   };
+
+  const isActive = (path: string) => location.pathname === path;
 
   const menuVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -54,31 +58,57 @@ const Navigation = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-lg">GL</span>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-                  GreenLoop
-                </h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Campus Exchange</p>
-              </div>
+              <Link to="/" className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-lg">GL</span>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+                    GreenLoop
+                  </h1>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Campus Exchange</p>
+                </div>
+              </Link>
             </motion.div>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">
               <nav className="flex items-center space-x-4">
-                <Button variant="ghost" className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
-                  Marketplace
+                <Button 
+                  variant="ghost" 
+                  className={`hover:bg-emerald-50 dark:hover:bg-emerald-900/20 ${
+                    isActive('/') ? 'bg-emerald-100 dark:bg-emerald-900/30' : ''
+                  }`}
+                  asChild
+                >
+                  <Link to="/">Marketplace</Link>
                 </Button>
-                <Button variant="ghost" className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
-                  Services
+                <Button 
+                  variant="ghost" 
+                  className={`hover:bg-emerald-50 dark:hover:bg-emerald-900/20 ${
+                    isActive('/services') ? 'bg-emerald-100 dark:bg-emerald-900/30' : ''
+                  }`}
+                  asChild
+                >
+                  <Link to="/services">Services</Link>
                 </Button>
-                <Button variant="ghost" className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
-                  Resources
+                <Button 
+                  variant="ghost" 
+                  className={`hover:bg-emerald-50 dark:hover:bg-emerald-900/20 ${
+                    isActive('/resources') ? 'bg-emerald-100 dark:bg-emerald-900/30' : ''
+                  }`}
+                  asChild
+                >
+                  <Link to="/resources">Resources</Link>
                 </Button>
-                <Button variant="ghost" className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
-                  Events
+                <Button 
+                  variant="ghost" 
+                  className={`hover:bg-emerald-50 dark:hover:bg-emerald-900/20 ${
+                    isActive('/events') ? 'bg-emerald-100 dark:bg-emerald-900/30' : ''
+                  }`}
+                  asChild
+                >
+                  <Link to="/events">Events</Link>
                 </Button>
               </nav>
               
@@ -225,10 +255,18 @@ const Navigation = () => {
                 className="md:hidden py-4 border-t border-gray-200 dark:border-gray-700"
               >
                 <div className="flex flex-col space-y-3">
-                  <Button variant="ghost" className="justify-start">Marketplace</Button>
-                  <Button variant="ghost" className="justify-start">Services</Button>
-                  <Button variant="ghost" className="justify-start">Resources</Button>
-                  <Button variant="ghost" className="justify-start">Events</Button>
+                  <Button variant="ghost" className="justify-start" asChild>
+                    <Link to="/">Marketplace</Link>
+                  </Button>
+                  <Button variant="ghost" className="justify-start" asChild>
+                    <Link to="/services">Services</Link>
+                  </Button>
+                  <Button variant="ghost" className="justify-start" asChild>
+                    <Link to="/resources">Resources</Link>
+                  </Button>
+                  <Button variant="ghost" className="justify-start" asChild>
+                    <Link to="/events">Events</Link>
+                  </Button>
                   
                   {!isAuthenticated && (
                     <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200 dark:border-gray-700">
