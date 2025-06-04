@@ -5,6 +5,8 @@ import productsSlice from './slices/productsSlice';
 import servicesSlice from './slices/servicesSlice';
 import eventsSlice from './slices/eventsSlice';
 import resourcesSlice from './slices/resourcesSlice';
+import roomsSlice from './slices/roomsSlice';
+import ridesSlice from './slices/ridesSlice';
 import uiSlice from './slices/uiSlice';
 import chatSlice from './slices/chatSlice';
 
@@ -15,6 +17,8 @@ export const store = configureStore({
     services: servicesSlice,
     events: eventsSlice,
     resources: resourcesSlice,
+    rooms: roomsSlice,
+    rides: ridesSlice,
     ui: uiSlice,
     chat: chatSlice,
   },
