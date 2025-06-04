@@ -73,12 +73,16 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 5 }: ImageUploadProps
     e.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleImageDragOver = (e: React.DragEvent, index: number) => {
+  const handleImageDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    if (draggedIndex !== null && draggedIndex !== index) {
-      moveImage(draggedIndex, index);
-      setDraggedIndex(index);
+  };
+
+  const handleImageDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex !== null && draggedIndex !== dropIndex) {
+      moveImage(draggedIndex, dropIndex);
     }
+    setDraggedIndex(null);
   };
 
   const handleImageDragEnd = () => {
@@ -156,7 +160,8 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 5 }: ImageUploadProps
                 }`}
                 draggable
                 onDragStart={(e) => handleImageDragStart(e, index)}
-                onDragOver={(e) => handleImageDragOver(e, index)}
+                onDragOver={handleImageDragOver}
+                onDrop={(e) => handleImageDrop(e, index)}
                 onDragEnd={handleImageDragEnd}
               >
                 <Card className="overflow-hidden border-2 border-transparent hover:border-green-300 transition-all">

@@ -13,6 +13,7 @@ import Events from "./pages/Events";
 import Resources from "./pages/Resources";
 import Rooms from "./pages/Rooms";
 import Rides from "./pages/Rides";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
               <Route path="/resources" element={<Resources />} />
               <Route path="/rooms" element={<Rooms />} />
               <Route path="/rides" element={<Rides />} />
+              <Route path="/admin" element={<AdminDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
