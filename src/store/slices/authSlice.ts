@@ -19,10 +19,27 @@ interface AuthState {
   error: string | null;
 }
 
+// Initialize state with localStorage data
+const getStoredAuth = () => {
+  try {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    return {
+      token,
+      user: user ? JSON.parse(user) : null,
+      isAuthenticated: !!(token && user)
+    };
+  } catch {
+    return { token: null, user: null, isAuthenticated: false };
+  }
+};
+
+const storedAuth = getStoredAuth();
+
 const initialState: AuthState = {
-  user: null,
-  token: localStorage.getItem('token'),
-  isAuthenticated: false,
+  user: storedAuth.user,
+  token: storedAuth.token,
+  isAuthenticated: storedAuth.isAuthenticated,
   loading: false,
   error: null,
 };
@@ -45,7 +62,11 @@ export const loginUser = createAsyncThunk(
         verified: true,
       };
       const token = 'mock-jwt-token';
+      
+      // Store in localStorage
       localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      
       return { user: mockUser, token };
     }
     
@@ -68,8 +89,25 @@ export const registerUser = createAsyncThunk(
       verified: false,
     };
     const token = 'mock-jwt-token';
+    
+    // Store in localStorage
     localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(mockUser));
+    
     return { user: mockUser, token };
+  }
+);
+
+export const initializeAuth = createAsyncThunk(
+  'auth/initialize',
+  async () => {
+    const storedAuth = getStoredAuth();
+    if (storedAuth.token && storedAuth.user) {
+      // Simulate token validation
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return storedAuth;
+    }
+    throw new Error('No valid session');
   }
 );
 
@@ -82,9 +120,16 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
     },
     clearError: (state) => {
       state.error = null;
+    },
+    updateUser: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+        localStorage.setItem('user', JSON.stringify(state.user));
+      }
     },
   },
   extraReducers: (builder) => {
@@ -116,9 +161,14 @@ const authSlice = createSlice({
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Registration failed';
+      })
+      .addCase(initializeAuth.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.isAuthenticated = action.payload.isAuthenticated;
       });
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, updateUser } = authSlice.actions;
 export default authSlice.reducer;

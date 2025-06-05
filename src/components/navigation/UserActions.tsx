@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { 
   User, MessageCircle, Heart, Bell, Settings, 
-  Sun, Moon, Shield, LogOut, Plus 
+  Sun, Moon, Shield, LogOut, Plus, LayoutDashboard
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,16 +18,23 @@ import {
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { toggleTheme } from '@/store/slices/uiSlice';
 import { logout } from '@/store/slices/authSlice';
+import { useNavigate } from 'react-router-dom';
 import AuthModal from '../modals/AuthModal';
 
 const UserActions = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { isAuthenticated, user } = useAppSelector(state => state.auth);
   const { theme } = useAppSelector(state => state.ui);
 
   const handleLogout = () => {
     dispatch(logout());
+    navigate('/');
+  };
+
+  const handleDashboard = () => {
+    navigate('/dashboard');
   };
 
   return (
@@ -107,6 +114,10 @@ const UserActions = () => {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleDashboard}>
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  <span>Dashboard</span>
+                </DropdownMenuItem>
                 <DropdownMenuItem>
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
