@@ -35,7 +35,6 @@ const ChatModal = ({ isOpen, onClose, seller, itemTitle, productId }: ChatModalP
       isOpen={isOpen} 
       onClose={onClose} 
       contactId={seller.id}
-      itemTitle={itemTitle}
     />
   );
 };

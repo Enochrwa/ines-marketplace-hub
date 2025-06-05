@@ -1,7 +1,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, Image as ImageIcon, Plus, Camera } from 'lucide-react';
+import { Upload, X, Camera, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import toast from 'react-hot-toast';

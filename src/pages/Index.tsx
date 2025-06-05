@@ -93,68 +93,71 @@ const Index = () => {
           />
         </div>
 
-        <div className="relative container mx-auto px-4 py-24 text-center text-white">
+        <div className="relative container mx-auto px-4 py-32 text-center text-white">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <Badge className="mb-4 bg-yellow-500 text-black border-yellow-400 hover:bg-yellow-600 font-semibold">
-              <Sparkles className="w-4 h-4 mr-2" />
+            <Badge className="mb-6 bg-yellow-500 text-black border-yellow-400 hover:bg-yellow-600 font-semibold text-lg px-6 py-2">
+              <Sparkles className="w-5 h-5 mr-2" />
               AI-Powered Campus Marketplace
             </Badge>
             
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
               <span className="bg-gradient-to-r from-yellow-400 to-green-400 bg-clip-text text-transparent">
                 GreenLoop
               </span>
               <br />
-              <span className="text-3xl md:text-4xl font-normal">INES-Ruhengeri Exchange</span>
+              <span className="text-3xl md:text-5xl font-normal">INES-Ruhengeri Exchange</span>
             </h1>
             
-            <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl mb-10 opacity-90 max-w-4xl mx-auto leading-relaxed">
               Your comprehensive campus marketplace for buying, selling, and sharing.
               <br className="hidden md:block" />
               <span className="font-semibold text-yellow-300">Reuse. Recycle. Rethink Resources.</span>
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-3xl mx-auto mb-8">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-4xl mx-auto mb-10">
               <div className="flex-1 w-full">
                 <SearchBar />
               </div>
               <Button 
                 size="lg" 
                 onClick={() => setIsPostModalOpen(true)}
-                className="bg-yellow-500 text-black hover:bg-yellow-600 font-semibold px-8 shadow-xl"
+                className="bg-yellow-500 text-black hover:bg-yellow-600 font-bold px-10 py-4 text-lg shadow-2xl transform hover:scale-105 transition-all"
               >
-                <Plus className="w-5 h-5 mr-2" />
+                <Plus className="w-6 h-6 mr-2" />
                 Post Item
               </Button>
             </div>
 
             {/* Quick Actions */}
-            <div className="flex justify-center gap-4 flex-wrap">
+            <div className="flex justify-center gap-6 flex-wrap mb-8">
               <Button 
                 variant="outline" 
+                size="lg"
                 onClick={() => setIsWishlistModalOpen(true)}
-                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+                className="bg-white/15 border-white/40 text-white hover:bg-white/25 backdrop-blur-sm px-6 py-3"
               >
-                <Heart className="w-4 h-4 mr-2" />
+                <Heart className="w-5 h-5 mr-2" />
                 Wishlist
               </Button>
               <Button 
                 variant="outline"
+                size="lg"
                 onClick={() => setIsChatModalOpen(true)}
-                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+                className="bg-white/15 border-white/40 text-white hover:bg-white/25 backdrop-blur-sm px-6 py-3"
               >
-                <MessageCircle className="w-4 h-4 mr-2" />
+                <MessageCircle className="w-5 h-5 mr-2" />
                 Messages
               </Button>
               <Button 
                 variant="outline"
-                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+                size="lg"
+                className="bg-white/15 border-white/40 text-white hover:bg-white/25 backdrop-blur-sm px-6 py-3"
               >
-                <Bell className="w-4 h-4 mr-2" />
+                <Bell className="w-5 h-5 mr-2" />
                 Alerts
               </Button>
             </div>
@@ -164,7 +167,7 @@ const Index = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-yellow-300 mt-4"
+                className="text-yellow-300 mt-6 text-xl font-semibold"
               >
                 Welcome back, {user.name}! 👋
               </motion.div>
@@ -300,6 +303,7 @@ const Index = () => {
         isOpen={isChatModalOpen} 
         onClose={() => setIsChatModalOpen(false)}
         seller={{
+          id: "seller1",
           name: "Marie Uwimana",
           avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150",
           reputation: 4.9,

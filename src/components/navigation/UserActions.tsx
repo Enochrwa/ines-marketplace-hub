@@ -135,15 +135,18 @@ const UserActions = () => {
             </DropdownMenu>
           </>
         ) : (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Button 
-              variant="ghost" 
+              variant="ghost"
+              size="lg"
               onClick={() => setShowAuthModal(true)}
+              className="text-lg font-semibold px-6 py-3 hover:bg-white/10"
             >
               Log In
             </Button>
             <Button 
-              className="bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white"
+              size="lg"
+              className="bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white text-lg font-bold px-8 py-3 shadow-xl"
               onClick={() => setShowAuthModal(true)}
             >
               Sign Up
