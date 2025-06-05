@@ -10,11 +10,13 @@ import CategoryFilter from '@/components/CategoryFilter';
 import SearchBar from '@/components/SearchBar';
 import StatsSection from '@/components/sections/StatsSection';
 import FeaturedSection from '@/components/sections/FeaturedSection';
-import PostItemModal from '@/components/marketplace/PostItemModal';
 import ChatModal from '@/components/marketplace/ChatModal';
 import WishlistModal from '@/components/marketplace/WishlistModal';
+import ProductDetailsModal from '@/components/marketplace/ProductDetailsModal';
+import SellItemModal from '@/components/marketplace/SellItemModal';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { fetchProducts } from '@/store/slices/productsSlice';
+import { Product } from '@/store/slices/productsSlice';
 import toast, { Toaster } from 'react-hot-toast';
 
 const Index = () => {
@@ -22,9 +24,11 @@ const Index = () => {
   const { items: products, loading, searchTerm, filters } = useAppSelector(state => state.products);
   const { isAuthenticated, user } = useAppSelector(state => state.auth);
   
-  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [isWishlistModalOpen, setIsWishlistModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isSellModalOpen, setIsSellModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     dispatch(fetchProducts({}));
@@ -40,19 +44,22 @@ const Index = () => {
     return matchesCategory && matchesSearch && matchesPrice && matchesCondition;
   });
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
+  const handleContactSeller = (product: Product) => {
+    setSelectedProduct(product);
+    setIsChatModalOpen(true);
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
+  const handleViewDetails = (product: Product) => {
+    setSelectedProduct(product);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleSellItem = () => {
+    if (!isAuthenticated) {
+      toast.error('Please log in to sell items');
+      return;
+    }
+    setIsSellModalOpen(true);
   };
 
   return (
@@ -93,72 +100,72 @@ const Index = () => {
           />
         </div>
 
-        <div className="relative container mx-auto px-4 py-32 text-center text-white">
+        <div className="relative container mx-auto px-4 py-20 sm:py-24 md:py-32 text-center text-white">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <Badge className="mb-6 bg-yellow-500 text-black border-yellow-400 hover:bg-yellow-600 font-semibold text-lg px-6 py-2">
-              <Sparkles className="w-5 h-5 mr-2" />
+            <Badge className="mb-4 sm:mb-6 bg-yellow-500 text-black border-yellow-400 hover:bg-yellow-600 font-semibold text-sm sm:text-lg px-4 sm:px-6 py-2">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               AI-Powered Campus Marketplace
             </Badge>
             
-            <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 sm:mb-8 leading-tight">
               <span className="bg-gradient-to-r from-yellow-400 to-green-400 bg-clip-text text-transparent">
                 GreenLoop
               </span>
               <br />
-              <span className="text-3xl md:text-5xl font-normal">INES-Ruhengeri Exchange</span>
+              <span className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal">INES-Ruhengeri Exchange</span>
             </h1>
             
-            <p className="text-xl md:text-2xl mb-10 opacity-90 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-10 opacity-90 max-w-4xl mx-auto leading-relaxed px-4">
               Your comprehensive campus marketplace for buying, selling, and sharing.
               <br className="hidden md:block" />
               <span className="font-semibold text-yellow-300">Reuse. Recycle. Rethink Resources.</span>
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-4xl mx-auto mb-10">
-              <div className="flex-1 w-full">
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 justify-center items-center max-w-4xl mx-auto mb-8 sm:mb-10 px-4">
+              <div className="flex-1 w-full max-w-2xl">
                 <SearchBar />
               </div>
               <Button 
                 size="lg" 
-                onClick={() => setIsPostModalOpen(true)}
-                className="bg-yellow-500 text-black hover:bg-yellow-600 font-bold px-10 py-4 text-lg shadow-2xl transform hover:scale-105 transition-all"
+                onClick={handleSellItem}
+                className="bg-yellow-500 text-black hover:bg-yellow-600 font-bold px-6 sm:px-10 py-3 sm:py-4 text-base sm:text-lg shadow-2xl transform hover:scale-105 transition-all w-full lg:w-auto"
               >
-                <Plus className="w-6 h-6 mr-2" />
+                <Plus className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
                 Post Item
               </Button>
             </div>
 
             {/* Quick Actions */}
-            <div className="flex justify-center gap-6 flex-wrap mb-8">
+            <div className="flex justify-center gap-3 sm:gap-6 flex-wrap mb-6 sm:mb-8 px-4">
               <Button 
                 variant="outline" 
                 size="lg"
                 onClick={() => setIsWishlistModalOpen(true)}
-                className="bg-white/15 border-white/40 text-white hover:bg-white/25 backdrop-blur-sm px-6 py-3"
+                className="bg-white/15 border-white/40 text-white hover:bg-white/25 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base"
               >
-                <Heart className="w-5 h-5 mr-2" />
-                Wishlist
+                <Heart className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                <span className="hidden sm:inline">Wishlist</span>
               </Button>
               <Button 
                 variant="outline"
                 size="lg"
                 onClick={() => setIsChatModalOpen(true)}
-                className="bg-white/15 border-white/40 text-white hover:bg-white/25 backdrop-blur-sm px-6 py-3"
+                className="bg-white/15 border-white/40 text-white hover:bg-white/25 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base"
               >
-                <MessageCircle className="w-5 h-5 mr-2" />
-                Messages
+                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                <span className="hidden sm:inline">Messages</span>
               </Button>
               <Button 
                 variant="outline"
                 size="lg"
-                className="bg-white/15 border-white/40 text-white hover:bg-white/25 backdrop-blur-sm px-6 py-3"
+                className="bg-white/15 border-white/40 text-white hover:bg-white/25 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base"
               >
-                <Bell className="w-5 h-5 mr-2" />
-                Alerts
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                <span className="hidden sm:inline">Alerts</span>
               </Button>
             </div>
 
@@ -167,7 +174,7 @@ const Index = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-yellow-300 mt-6 text-xl font-semibold"
+                className="text-yellow-300 mt-4 sm:mt-6 text-lg sm:text-xl font-semibold px-4"
               >
                 Welcome back, {user.name}! 👋
               </motion.div>
@@ -183,8 +190,8 @@ const Index = () => {
       <FeaturedSection />
 
       {/* Main Content */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex flex-col lg:flex-row gap-8">
+      <section className="container mx-auto px-4 py-8 sm:py-12">
+        <div className="flex flex-col lg:flex-row gap-6 sm:gap-8">
           {/* Sidebar Filters */}
           <motion.div 
             className="lg:w-1/4"
@@ -198,16 +205,16 @@ const Index = () => {
           {/* Products Grid */}
           <div className="lg:w-3/4">
             <motion.div 
-              className="flex justify-between items-center mb-8"
+              className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 sm:mb-8 gap-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <div>
-                <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mb-2">
                   {filters.category === "All" ? "All Items" : filters.category}
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
                   {filteredProducts.length} items found
                   {searchTerm && (
                     <span className="ml-2">
@@ -223,28 +230,28 @@ const Index = () => {
               </div>
 
               <div className="flex items-center space-x-2">
-                <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">
-                  <TrendingUp className="w-4 h-4 mr-1" />
+                <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 text-xs sm:text-sm">
+                  <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                   Trending
                 </Badge>
-                <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50">
-                  <Users className="w-4 h-4 mr-1" />
+                <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50 text-xs sm:text-sm">
+                  <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                   {products.length}+ Active
                 </Badge>
               </div>
             </motion.div>
 
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {[...Array(6)].map((_, i) => (
                   <div key={i} className="animate-pulse">
-                    <div className="bg-gray-200 dark:bg-gray-700 rounded-lg h-64"></div>
+                    <div className="bg-gray-200 dark:bg-gray-700 rounded-lg h-64 sm:h-80"></div>
                   </div>
                 ))}
               </div>
             ) : (
               <motion.div 
-                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6"
                 variants={{
                   hidden: { opacity: 0 },
                   visible: {
@@ -265,7 +272,11 @@ const Index = () => {
                       visible: { opacity: 1, y: 0 }
                     }}
                   >
-                    <ProductCard product={product} />
+                    <ProductCard 
+                      product={product} 
+                      onContactSeller={handleContactSeller}
+                      onViewDetails={handleViewDetails}
+                    />
                   </motion.div>
                 ))}
               </motion.div>
@@ -273,16 +284,16 @@ const Index = () => {
 
             {!loading && filteredProducts.length === 0 && (
               <motion.div 
-                className="text-center py-20"
+                className="text-center py-16 sm:py-20"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5 }}
               >
-                <ShoppingBag className="w-20 h-20 mx-auto text-gray-400 mb-6" />
-                <h3 className="text-2xl font-semibold text-gray-600 dark:text-gray-400 mb-4">
+                <ShoppingBag className="w-16 h-16 sm:w-20 sm:h-20 mx-auto text-gray-400 mb-6" />
+                <h3 className="text-xl sm:text-2xl font-semibold text-gray-600 dark:text-gray-400 mb-4">
                   No items found
                 </h3>
-                <p className="text-gray-500 dark:text-gray-500 mb-6 max-w-md mx-auto">
+                <p className="text-gray-500 dark:text-gray-500 mb-6 max-w-md mx-auto px-4">
                   Try adjusting your search terms or filters to find what you're looking for.
                 </p>
                 <Button 
@@ -298,20 +309,30 @@ const Index = () => {
       </section>
 
       {/* Modals */}
-      <PostItemModal isOpen={isPostModalOpen} onClose={() => setIsPostModalOpen(false)} />
+      <SellItemModal isOpen={isSellModalOpen} onClose={() => setIsSellModalOpen(false)} />
+      
       <ChatModal 
         isOpen={isChatModalOpen} 
         onClose={() => setIsChatModalOpen(false)}
-        seller={{
+        seller={selectedProduct ? selectedProduct.seller : {
           id: "seller1",
           name: "Marie Uwimana",
           avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150",
           reputation: 4.9,
           verified: true
         }}
-        itemTitle="Engineering Mathematics Textbook"
+        itemTitle={selectedProduct?.title || "Item"}
+        productId={selectedProduct?.id}
       />
+      
       <WishlistModal isOpen={isWishlistModalOpen} onClose={() => setIsWishlistModalOpen(false)} />
+      
+      <ProductDetailsModal 
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        product={selectedProduct}
+        onContactSeller={handleContactSeller}
+      />
     </div>
   );
 };
