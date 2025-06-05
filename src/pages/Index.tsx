@@ -16,7 +16,8 @@ import { Product } from '@/store/slices/productsSlice';
 
 const Index = () => {
   const dispatch = useAppDispatch();
-  const { products, loading, searchTerm, selectedCategory } = useAppSelector(state => state.products);
+  const productsState = useAppSelector(state => state.products);
+  const { products = [], loading = false, searchTerm = '', selectedCategory = 'All' } = productsState || {};
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [chatSeller, setChatSeller] = useState<{
     id: string;

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Calendar, MapPin, Users, Clock, Star, Heart, Share2 } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, Star, Heart, Share2, Eye } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
