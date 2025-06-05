@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, MapPin, Users, Star, Eye, Share2, ExternalLink, Ticket } from 'lucide-react';
