@@ -173,7 +173,7 @@ const ChatSystem = ({ isOpen, onClose, contactId }: ChatSystemProps) => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white dark:bg-gray-900 rounded-xl w-full max-w-6xl h-[600px] flex overflow-hidden shadow-2xl"
+        className="bg-white dark:bg-gray-900 rounded-xl h-[100%] w-[100%] flex overflow-hidden shadow-2xl"
       >
         {/* Contacts Sidebar */}
         <div className="w-80 border-r border-gray-200 dark:border-gray-700 flex flex-col">

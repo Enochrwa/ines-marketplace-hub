@@ -97,10 +97,12 @@ const MobileMenu = () => {
         )}
       </AnimatePresence>
 
-      <AuthModal 
+      <div className='relative'>
+        <AuthModal 
         isOpen={showAuthModal} 
         onClose={() => setShowAuthModal(false)} 
       />
+      </div>
     </>
   );
 };
