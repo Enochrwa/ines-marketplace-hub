@@ -15,6 +15,7 @@ import Rides from './pages/Rides';
 import Resources from './pages/Resources';
 import StudyGroups from './pages/StudyGroups';
 import Tutoring from './pages/Tutoring';
+import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import NotFound from './pages/NotFound';
 
@@ -24,7 +25,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+        <ThemeProvider storageKey="vite-ui-theme">
           <Router>
             <div className="min-h-screen bg-background">
               <Routes>
@@ -36,6 +37,7 @@ function App() {
                 <Route path="/resources" element={<Resources />} />
                 <Route path="/study-groups" element={<StudyGroups />} />
                 <Route path="/tutoring" element={<Tutoring />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
