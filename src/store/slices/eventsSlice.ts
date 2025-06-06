@@ -9,137 +9,116 @@ export interface Event {
   time: string;
   location: string;
   category: string;
-  image?: string;
+  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
+  coverImage: string;
   organizer: {
     id: string;
     name: string;
     avatar?: string;
     verified: boolean;
+    type: 'student' | 'faculty' | 'club' | 'organization';
   };
-  price?: number;
-  capacity?: number;
-  attendees?: number;
-  isFree?: boolean;
+  ticketInfo: {
+    type: 'free' | 'paid';
+    price?: number;
+    capacity: number;
+    registered: number;
+    maxPerUser: number;
+  };
   tags: string[];
-  likes: number;
-  views: number;
-  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
-  isApproved: boolean;
+  attendees?: string[];
   createdAt: string;
+  updatedAt: string;
 }
 
 interface EventsState {
-  events: Event[];
+  items: Event[];
   loading: boolean;
   error: string | null;
   searchTerm: string;
   filters: {
     category: string;
-    ticketType: string;
-    dateRange: string;
     status: string;
+    type: string;
   };
 }
 
 const initialState: EventsState = {
-  events: [],
+  items: [],
   loading: false,
   error: null,
   searchTerm: '',
   filters: {
     category: 'All',
-    ticketType: 'All',
-    dateRange: 'All',
-    status: 'upcoming',
-  },
+    status: 'All',
+    type: 'All'
+  }
 };
+
+// Mock data
+const mockEvents: Event[] = [
+  {
+    id: '1',
+    title: 'Tech Startup Pitch Competition',
+    description: 'Present your innovative startup ideas to industry experts and compete for funding opportunities.',
+    date: '2024-12-15',
+    time: '6:00 PM - 9:00 PM',
+    location: 'Engineering Building Auditorium',
+    category: 'Competition',
+    status: 'upcoming',
+    coverImage: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+    organizer: {
+      id: 'org1',
+      name: 'Entrepreneurship Club',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
+      verified: true,
+      type: 'club'
+    },
+    ticketInfo: {
+      type: 'free',
+      capacity: 200,
+      registered: 87,
+      maxPerUser: 1
+    },
+    tags: ['technology', 'startup', 'competition'],
+    createdAt: '2024-11-01T10:00:00Z',
+    updatedAt: '2024-11-01T10:00:00Z'
+  },
+  {
+    id: '2',
+    title: 'AI & Machine Learning Workshop',
+    description: 'Hands-on workshop covering the latest trends in AI and machine learning applications.',
+    date: '2024-12-20',
+    time: '2:00 PM - 5:00 PM',
+    location: 'Computer Science Lab 101',
+    category: 'Workshop',
+    status: 'upcoming',
+    coverImage: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800',
+    organizer: {
+      id: 'org2',
+      name: 'Dr. Sarah Johnson',
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b2c2cac3?w=100',
+      verified: true,
+      type: 'faculty'
+    },
+    ticketInfo: {
+      type: 'paid',
+      price: 25,
+      capacity: 50,
+      registered: 42,
+      maxPerUser: 1
+    },
+    tags: ['ai', 'machine-learning', 'workshop'],
+    createdAt: '2024-11-02T10:00:00Z',
+    updatedAt: '2024-11-02T10:00:00Z'
+  }
+];
 
 export const fetchEvents = createAsyncThunk(
   'events/fetchEvents',
-  async () => {
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    const mockEvents: Event[] = [
-      {
-        id: '1',
-        title: 'Tech Innovation Summit 2024',
-        description: 'Join us for a day of tech talks, networking, and innovation. Featuring guest speakers from leading tech companies and startup founders.',
-        date: '2024-02-15',
-        time: '09:00',
-        location: 'Main Auditorium',
-        category: 'Academic',
-        image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400',
-        organizer: {
-          id: 'org1',
-          name: 'Engineering Club',
-          avatar: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=150',
-          verified: true,
-        },
-        price: 0,
-        capacity: 200,
-        attendees: 45,
-        isFree: true,
-        tags: ['technology', 'innovation', 'networking'],
-        likes: 28,
-        views: 156,
-        status: 'upcoming',
-        isApproved: true,
-        createdAt: '2024-01-10T14:20:00Z',
-      },
-      {
-        id: '2',
-        title: 'Career Fair 2024',
-        description: 'Meet with top employers and explore career opportunities. Bring your CV and dress professionally for networking sessions.',
-        date: '2024-02-20',
-        time: '10:00',
-        location: 'Sports Complex',
-        category: 'Career',
-        image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400',
-        organizer: {
-          id: 'org2',
-          name: 'Career Services',
-          avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150',
-          verified: true,
-        },
-        price: 0,
-        capacity: 500,
-        attendees: 234,
-        isFree: true,
-        tags: ['career', 'jobs', 'networking'],
-        likes: 45,
-        views: 203,
-        status: 'upcoming',
-        isApproved: true,
-        createdAt: '2024-01-08T10:15:00Z',
-      },
-      {
-        id: '3',
-        title: 'Student Art Exhibition',
-        description: 'Showcase of amazing artwork created by our talented students. Come support local artists and discover new talent.',
-        date: '2024-02-25',
-        time: '14:00',
-        location: 'Art Gallery',
-        category: 'Arts',
-        image: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400',
-        organizer: {
-          id: 'org3',
-          name: 'Art Students Society',
-          avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150',
-          verified: true,
-        },
-        price: 5,
-        capacity: 150,
-        attendees: 67,
-        isFree: false,
-        tags: ['art', 'exhibition', 'creativity'],
-        likes: 32,
-        views: 89,
-        status: 'upcoming',
-        isApproved: true,
-        createdAt: '2024-01-12T16:30:00Z',
-      },
-    ];
-    
+  async (filters: Partial<EventsState['filters']>) => {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
     return mockEvents;
   }
 );
@@ -148,16 +127,16 @@ const eventsSlice = createSlice({
   name: 'events',
   initialState,
   reducers: {
-    setEventSearchTerm: (state, action: PayloadAction<string>) => {
+    setSearchTerm: (state, action: PayloadAction<string>) => {
       state.searchTerm = action.payload;
     },
-    setEventFilters: (state, action: PayloadAction<Partial<EventsState['filters']>>) => {
+    setFilters: (state, action: PayloadAction<Partial<EventsState['filters']>>) => {
       state.filters = { ...state.filters, ...action.payload };
     },
-    clearEventFilters: (state) => {
+    clearFilters: (state) => {
       state.filters = initialState.filters;
       state.searchTerm = '';
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -167,19 +146,14 @@ const eventsSlice = createSlice({
       })
       .addCase(fetchEvents.fulfilled, (state, action) => {
         state.loading = false;
-        state.events = action.payload;
+        state.items = action.payload;
       })
       .addCase(fetchEvents.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch events';
       });
-  },
+  }
 });
 
-export const { 
-  setEventSearchTerm,
-  setEventFilters, 
-  clearEventFilters 
-} = eventsSlice.actions;
-
+export const { setSearchTerm, setFilters, clearFilters } = eventsSlice.actions;
 export default eventsSlice.reducer;

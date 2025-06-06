@@ -25,7 +25,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <ThemeProvider storageKey="vite-ui-theme">
+        <ThemeProvider>
           <Router>
             <div className="min-h-screen bg-background">
               <Routes>
