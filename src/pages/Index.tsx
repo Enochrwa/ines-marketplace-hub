@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Plus } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { fetchProducts } from '@/store/slices/productsSlice';
 import Navigation from '@/components/Navigation';
@@ -12,12 +13,13 @@ import StatsSection from '@/components/sections/StatsSection';
 import ProductDetailsModal from '@/components/marketplace/ProductDetailsModal';
 import ChatModal from '@/components/marketplace/ChatModal';
 import SellItemModal from '@/components/marketplace/SellItemModal';
+import FloatingActionButton from '@/components/ui/floating-action-button';
 import { Product } from '@/store/slices/productsSlice';
 
 const Index = () => {
   const dispatch = useAppDispatch();
   const productsState = useAppSelector(state => state.products);
-  const { products = [], loading = false, searchTerm = '', selectedCategory = 'All' } = productsState || {};
+  const { items: products = [], loading = false, searchTerm = '', filters = { category: 'All' } } = productsState || {};
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [chatSeller, setChatSeller] = useState<{
     id: string;
@@ -29,14 +31,14 @@ const Index = () => {
   const [showSellModal, setShowSellModal] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchProducts());
+    dispatch(fetchProducts({}));
   }, [dispatch]);
 
   // Filter products based on search and category
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+    const matchesCategory = filters.category === 'All' || product.category === filters.category;
     return matchesSearch && matchesCategory;
   });
 
@@ -137,6 +139,12 @@ const Index = () => {
       <SellItemModal
         isOpen={showSellModal}
         onClose={() => setShowSellModal(false)}
+      />
+
+      <FloatingActionButton
+        onClick={() => setShowSellModal(true)}
+        icon={<Plus className="w-6 h-6" />}
+        tooltip="Sell Item"
       />
     </div>
   );

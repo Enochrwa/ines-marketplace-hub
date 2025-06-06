@@ -1,64 +1,51 @@
 
-import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { store } from './store';
 import { ThemeProvider } from './components/providers/ThemeProvider';
-import { useAppDispatch } from './store/hooks';
-import { initializeAuth } from './store/slices/authSlice';
-import Index from "./pages/Index";
-import Services from "./pages/Services";
-import Events from "./pages/Events";
-import Resources from "./pages/Resources";
-import Rooms from "./pages/Rooms";
-import Rides from "./pages/Rides";
-import AdminDashboard from "./pages/AdminDashboard";
-import UserDashboard from "./components/dashboard/UserDashboard";
-import NotFound from "./pages/NotFound";
+
+// Pages
+import Index from './pages/Index';
+import Events from './pages/Events';
+import Services from './pages/Services';
+import Rooms from './pages/Rooms';
+import Rides from './pages/Rides';
+import Resources from './pages/Resources';
+import StudyGroups from './pages/StudyGroups';
+import Tutoring from './pages/Tutoring';
+import AdminDashboard from './pages/AdminDashboard';
+import NotFound from './pages/NotFound';
 
 const queryClient = new QueryClient();
 
-const AppContent = () => {
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    // Initialize auth from localStorage on app start
-    dispatch(initializeAuth());
-  }, [dispatch]);
-
+function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/events" element={<Events />} />
-        <Route path="/resources" element={<Resources />} />
-        <Route path="/rooms" element={<Rooms />} />
-        <Route path="/rides" element={<Rides />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/dashboard" element={<UserDashboard />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
-  );
-};
-
-const App = () => (
-  <Provider store={store}>
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <AppContent />
-        </TooltipProvider>
-      </ThemeProvider>
+      <Provider store={store}>
+        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+          <Router>
+            <div className="min-h-screen bg-background">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/events" element={<Events />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/rooms" element={<Rooms />} />
+                <Route path="/rides" element={<Rides />} />
+                <Route path="/resources" element={<Resources />} />
+                <Route path="/study-groups" element={<StudyGroups />} />
+                <Route path="/tutoring" element={<Tutoring />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Toaster position="bottom-right" />
+            </div>
+          </Router>
+        </ThemeProvider>
+      </Provider>
     </QueryClientProvider>
-  </Provider>
-);
+  );
+}
 
 export default App;

@@ -1,12 +1,13 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Calendar } from 'lucide-react';
+import { Search, Calendar, Plus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { fetchEvents, setEventSearchTerm } from '@/store/slices/eventsSlice';
 import EventCard from '@/components/events/EventCard';
 import Navigation from '@/components/Navigation';
+import FloatingActionButton from '@/components/ui/floating-action-button';
 
 const Events = () => {
   const dispatch = useAppDispatch();
@@ -90,19 +91,18 @@ const Events = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredEvents.map((event) => (
-                <EventCard 
-                  key={event.id} 
-                  event={{
-                    ...event,
-                    likes: event.likes || 0,
-                    views: event.views || 0
-                  }} 
-                />
+                <EventCard key={event.id} event={event} />
               ))}
             </div>
           )}
         </motion.div>
       </div>
+
+      <FloatingActionButton
+        onClick={() => {}}
+        icon={<Plus className="w-6 h-6" />}
+        tooltip="Create Event"
+      />
     </div>
   );
 };
