@@ -12,13 +12,13 @@ import {
   Paperclip,
   Smile,
   Check,
-  CheckCheck
+  CheckCheck,
+  ArrowLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar } from '@/components/ui/avatar';
 
 interface ChatContact {
   id: string;
@@ -49,6 +49,7 @@ const ChatSystem = ({ isOpen, onClose, contactId }: ChatSystemProps) => {
   const [activeChat, setActiveChat] = useState<string | null>(contactId || null);
   const [message, setMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showMobileChat, setShowMobileChat] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [contacts] = useState<ChatContact[]>([
@@ -134,6 +135,13 @@ const ChatSystem = ({ isOpen, onClose, contactId }: ChatSystemProps) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, activeChat]);
 
+  useEffect(() => {
+    if (contactId && contacts.find(c => c.id === contactId)) {
+      setActiveChat(contactId);
+      setShowMobileChat(true);
+    }
+  }, [contactId, contacts]);
+
   const sendMessage = () => {
     if (!message.trim() || !activeChat) return;
 
@@ -165,187 +173,400 @@ const ChatSystem = ({ isOpen, onClose, contactId }: ChatSystemProps) => {
     contact.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleContactSelect = (contactId: string) => {
+    setActiveChat(contactId);
+    setShowMobileChat(true);
+  };
+
+  const handleBackToContacts = () => {
+    setShowMobileChat(false);
+    setActiveChat(null);
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white dark:bg-gray-900 rounded-xl h-[100%] w-[100%] flex overflow-hidden shadow-2xl"
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        className="bg-white dark:bg-gray-900 rounded-2xl h-[95vh] md:h-[85vh] w-full md:w-[90%] lg:w-[80%] xl:w-[70%] flex overflow-hidden shadow-2xl border border-gray-200/50 dark:border-gray-700/50"
       >
-        {/* Contacts Sidebar */}
-        <div className="w-80 border-r border-gray-200 dark:border-gray-700 flex flex-col">
-          {/* Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Messages</h2>
-              <Button variant="ghost" size="sm" onClick={onClose}>
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Search conversations..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-
-          {/* Contacts List */}
-          <div className="flex-1 overflow-y-auto">
-            {filteredContacts.map((contact) => (
+        {/* Mobile/Tablet Layout */}
+        <div className="flex-1 md:hidden">
+          <AnimatePresence mode="wait">
+            {!showMobileChat ? (
               <motion.div
-                key={contact.id}
-                whileHover={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
-                className={`p-4 cursor-pointer border-b border-gray-100 dark:border-gray-800 ${
-                  activeChat === contact.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                }`}
-                onClick={() => setActiveChat(contact.id)}
+                key="contacts"
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -100, opacity: 0 }}
+                className="h-full flex flex-col"
               >
-                <div className="flex items-center space-x-3">
+                {/* Mobile Header */}
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-green-500 to-yellow-500">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-bold text-white">Messages</h2>
+                    <Button variant="ghost" size="sm" onClick={onClose} className="text-white hover:bg-white/20">
+                      <X className="w-5 h-5" />
+                    </Button>
+                  </div>
                   <div className="relative">
-                    <img
-                      src={contact.avatar}
-                      alt={contact.name}
-                      className="w-12 h-12 rounded-full object-cover"
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input
+                      placeholder="Search conversations..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 bg-white/90 border-0"
                     />
-                    {contact.online && (
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                    )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">
-                        {contact.name}
-                      </h3>
-                      <span className="text-xs text-gray-500">{contact.timestamp}</span>
-                    </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-                      {contact.lastMessage}
-                    </p>
-                  </div>
-                  {contact.unreadCount > 0 && (
-                    <Badge className="bg-blue-500 text-white text-xs">
-                      {contact.unreadCount}
-                    </Badge>
-                  )}
+                </div>
+
+                {/* Mobile Contacts List */}
+                <div className="flex-1 overflow-y-auto">
+                  {filteredContacts.map((contact) => (
+                    <motion.div
+                      key={contact.id}
+                      whileHover={{ backgroundColor: 'rgba(34, 197, 94, 0.05)' }}
+                      whileTap={{ scale: 0.98 }}
+                      className="p-4 cursor-pointer border-b border-gray-100 dark:border-gray-800"
+                      onClick={() => handleContactSelect(contact.id)}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="relative">
+                          <img
+                            src={contact.avatar}
+                            alt={contact.name}
+                            className="w-12 h-12 rounded-full object-cover"
+                          />
+                          {contact.online && (
+                            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+                              {contact.name}
+                            </h3>
+                            <span className="text-xs text-gray-500">{contact.timestamp}</span>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                            {contact.lastMessage}
+                          </p>
+                        </div>
+                        {contact.unreadCount > 0 && (
+                          <Badge className="bg-green-500 text-white text-xs">
+                            {contact.unreadCount}
+                          </Badge>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Chat Area */}
-        <div className="flex-1 flex flex-col">
-          {activeChat ? (
-            <>
-              {/* Chat Header */}
-              <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-                <div className="flex items-center justify-between">
+            ) : (
+              <motion.div
+                key="chat"
+                initial={{ x: 100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 100, opacity: 0 }}
+                className="h-full flex flex-col"
+              >
+                {/* Mobile Chat Header */}
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-green-500 to-yellow-500">
                   <div className="flex items-center space-x-3">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleBackToContacts}
+                      className="text-white hover:bg-white/20"
+                    >
+                      <ArrowLeft className="w-5 h-5" />
+                    </Button>
                     <img
                       src={contacts.find(c => c.id === activeChat)?.avatar}
                       alt="Contact"
                       className="w-10 h-10 rounded-full"
                     />
-                    <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-white">
                         {contacts.find(c => c.id === activeChat)?.name}
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-white/80">
                         {contacts.find(c => c.id === activeChat)?.online ? 'Online' : 'Offline'}
                       </p>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="sm">
-                      <Phone className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <Video className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <MoreVertical className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {(messages[activeChat] || []).map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`flex ${msg.senderId === 'me' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                        msg.senderId === 'me'
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-                      }`}
-                    >
-                      <p className="text-sm">{msg.content}</p>
-                      <div className="flex items-center justify-between mt-1">
-                        <span className="text-xs opacity-70">{msg.timestamp}</span>
-                        {msg.senderId === 'me' && (
-                          <div className="ml-2">
-                            {msg.status === 'sent' && <Check className="w-3 h-3 opacity-70" />}
-                            {msg.status === 'delivered' && <CheckCheck className="w-3 h-3 opacity-70" />}
-                            {msg.status === 'read' && <CheckCheck className="w-3 h-3 text-blue-200" />}
-                          </div>
-                        )}
-                      </div>
+                    <div className="flex items-center space-x-2">
+                      <Button variant="ghost" size="sm" className="text-white hover:bg-white/20">
+                        <Phone className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="text-white hover:bg-white/20">
+                        <Video className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-
-              {/* Message Input */}
-              <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center space-x-2">
-                  <Button variant="ghost" size="sm">
-                    <Paperclip className="w-4 h-4" />
-                  </Button>
-                  <Input
-                    placeholder="Type a message..."
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    className="flex-1"
-                  />
-                  <Button variant="ghost" size="sm">
-                    <Smile className="w-4 h-4" />
-                  </Button>
-                  <Button 
-                    onClick={sendMessage}
-                    disabled={!message.trim()}
-                    className="bg-blue-500 hover:bg-blue-600 text-white"
-                  >
-                    <Send className="w-4 h-4" />
-                  </Button>
                 </div>
+
+                {/* Mobile Messages */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-green-50/30 to-yellow-50/30 dark:from-gray-800 dark:to-gray-900">
+                  {(messages[activeChat!] || []).map((msg) => (
+                    <motion.div
+                      key={msg.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`flex ${msg.senderId === 'me' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[85%] px-4 py-3 rounded-2xl shadow-md ${
+                          msg.senderId === 'me'
+                            ? 'bg-gradient-to-r from-green-500 to-yellow-500 text-white'
+                            : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600'
+                        }`}
+                      >
+                        <p className="text-sm">{msg.content}</p>
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-xs opacity-70">{msg.timestamp}</span>
+                          {msg.senderId === 'me' && (
+                            <div className="ml-2">
+                              {msg.status === 'sent' && <Check className="w-3 h-3 opacity-70" />}
+                              {msg.status === 'delivered' && <CheckCheck className="w-3 h-3 opacity-70" />}
+                              {msg.status === 'read' && <CheckCheck className="w-3 h-3 text-green-200" />}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Mobile Message Input */}
+                <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                  <div className="flex items-center space-x-2">
+                    <Button variant="ghost" size="sm" className="text-gray-400 hover:text-green-500">
+                      <Paperclip className="w-4 h-4" />
+                    </Button>
+                    <Input
+                      placeholder="Type a message..."
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      className="flex-1 rounded-full border-gray-300 focus:border-green-500"
+                    />
+                    <Button variant="ghost" size="sm" className="text-gray-400 hover:text-yellow-500">
+                      <Smile className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      onClick={sendMessage}
+                      disabled={!message.trim()}
+                      className="rounded-full bg-gradient-to-r from-green-500 to-yellow-500 hover:from-green-600 hover:to-yellow-600 text-white"
+                    >
+                      <Send className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:flex flex-1">
+          {/* Contacts Sidebar */}
+          <div className="w-80 border-r border-gray-200 dark:border-gray-700 flex flex-col bg-gray-50/50 dark:bg-gray-800/50">
+            {/* Header */}
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-green-500 to-yellow-500">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-white">Messages</h2>
+                <Button variant="ghost" size="sm" onClick={onClose} className="text-white hover:bg-white/20">
+                  <X className="w-5 h-5" />
+                </Button>
               </div>
-            </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center">
-                <MessageCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                  Select a conversation
-                </h3>
-                <p className="text-gray-500">
-                  Choose a contact to start messaging
-                </p>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search conversations..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-white/90 border-0 rounded-full"
+                />
               </div>
             </div>
-          )}
+
+            {/* Contacts List */}
+            <div className="flex-1 overflow-y-auto">
+              {filteredContacts.map((contact) => (
+                <motion.div
+                  key={contact.id}
+                  whileHover={{ backgroundColor: 'rgba(34, 197, 94, 0.05)' }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`p-4 cursor-pointer border-b border-gray-100 dark:border-gray-800 transition-colors ${
+                    activeChat === contact.id ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700' : ''
+                  }`}
+                  onClick={() => handleContactSelect(contact.id)}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="relative">
+                      <img
+                        src={contact.avatar}
+                        alt={contact.name}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      {contact.online && (
+                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+                          {contact.name}
+                        </h3>
+                        <span className="text-xs text-gray-500">{contact.timestamp}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                        {contact.lastMessage}
+                      </p>
+                    </div>
+                    {contact.unreadCount > 0 && (
+                      <Badge className="bg-green-500 text-white text-xs">
+                        {contact.unreadCount}
+                      </Badge>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Chat Area */}
+          <div className="flex-1 flex flex-col">
+            {activeChat ? (
+              <>
+                {/* Chat Header */}
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-green-50 to-yellow-50 dark:from-gray-800 dark:to-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={contacts.find(c => c.id === activeChat)?.avatar}
+                        alt="Contact"
+                        className="w-12 h-12 rounded-full border-2 border-white shadow-md"
+                      />
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">
+                          {contacts.find(c => c.id === activeChat)?.name}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          {contacts.find(c => c.id === activeChat)?.online ? (
+                            <span className="flex items-center">
+                              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                              Online now
+                            </span>
+                          ) : 'Offline'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Button variant="ghost" size="sm" className="hover:bg-green-100 dark:hover:bg-green-800">
+                        <Phone className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="hover:bg-yellow-100 dark:hover:bg-yellow-800">
+                        <Video className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm">
+                        <MoreVertical className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Messages */}
+                <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-green-50/30 to-yellow-50/30 dark:from-gray-900 dark:to-gray-800">
+                  {(messages[activeChat] || []).map((msg) => (
+                    <motion.div
+                      key={msg.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      className={`flex ${msg.senderId === 'me' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-md px-4 py-3 rounded-2xl shadow-md ${
+                          msg.senderId === 'me'
+                            ? 'bg-gradient-to-r from-green-500 to-yellow-500 text-white'
+                            : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600'
+                        }`}
+                      >
+                        <p className="text-sm leading-relaxed">{msg.content}</p>
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-xs opacity-70">{msg.timestamp}</span>
+                          {msg.senderId === 'me' && (
+                            <div className="ml-2">
+                              {msg.status === 'sent' && <Check className="w-3 h-3 opacity-70" />}
+                              {msg.status === 'delivered' && <CheckCheck className="w-3 h-3 opacity-70" />}
+                              {msg.status === 'read' && <CheckCheck className="w-3 h-3 text-green-200" />}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Message Input */}
+                <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                  <div className="flex items-center space-x-3">
+                    <Button variant="ghost" size="sm" className="text-gray-400 hover:text-green-500">
+                      <Paperclip className="w-5 h-5" />
+                    </Button>
+                    <div className="flex-1 relative">
+                      <Input
+                        placeholder="Type a message..."
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        className="pr-12 rounded-full border-gray-300 focus:border-green-500 bg-gray-50 dark:bg-gray-700"
+                      />
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-yellow-500"
+                      >
+                        <Smile className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <Button 
+                      onClick={sendMessage}
+                      disabled={!message.trim()}
+                      className="rounded-full bg-gradient-to-r from-green-500 to-yellow-500 hover:from-green-600 hover:to-yellow-600 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                    >
+                      <Send className="w-5 h-5" />
+                    </Button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-green-50 to-yellow-50 dark:from-gray-900 dark:to-gray-800">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center"
+                >
+                  <div className="w-24 h-24 bg-gradient-to-r from-green-500 to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <MessageCircle className="w-12 h-12 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
+                    Select a conversation
+                  </h3>
+                  <p className="text-gray-500">
+                    Choose a contact to start messaging
+                  </p>
+                </motion.div>
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
     </div>
