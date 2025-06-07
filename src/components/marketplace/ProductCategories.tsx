@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import { 
   BookOpen, Laptop, Shirt, Home, Music, Bike, 
-  Utensils, Camera, GameController2, Heart, 
+  Utensils, Camera, Gamepad2, Heart, 
   Car, Briefcase, Palette, Dumbbell 
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -84,7 +84,7 @@ const ProductCategories = () => {
     {
       id: 'Gaming',
       name: 'Gaming',
-      icon: GameController2,
+      icon: Gamepad2,
       color: 'from-indigo-500 to-blue-500',
       count: 18,
     },
